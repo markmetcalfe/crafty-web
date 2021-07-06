@@ -39,6 +39,11 @@ class helpers:
         self.webroot = os.path.join(self.crafty_root, 'app', 'web')
         self.web_temp = os.path.join(self.webroot, 'temp')
 
+        self.websubdir = os.environ.get('WEB_SUBDIR')
+        if self.websubdir is None:
+            self.websubdir = r''
+        self.websubdir += r'/'
+
         self.passhasher = PasswordHasher()
 
         self.can_email = False
@@ -176,6 +181,9 @@ class helpers:
 
     def get_web_root_path(self):
         return self.webroot
+
+    def get_web_subdir(self):
+        return self.websubdir
 
     def get_web_temp_path(self):
         return self.web_temp
