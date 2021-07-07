@@ -91,6 +91,7 @@ class webserver():
 
         port_number = websettings.port_number
         web_root = helper.get_web_root_path()
+        web_subdir = helper.get_web_subdir()
 
         logger.info("Starting Tornado HTTPS Server on port {}".format(port_number))
 
@@ -114,34 +115,34 @@ class webserver():
                 console.warning("Unable to find your public IP\nThe service might be down, or your internet is down.")
 
         handlers = [
-            (r'/', PublicHandler),
-            (r'/([a-zA-Z]+)', PublicHandler),
-            (r'/admin/downloadbackup', DownloadHandler),
-            (r'/admin/(.*)', AdminHandler, dict(mcserver=self.mc_server)),
-            (r'/ajax/(.*)', AjaxHandler, dict(mcserver=self.mc_server)),
-            (r'/setup/(.*)', SetupHandler, dict(mcserver=self.mc_server)),
-            (r'/static(.*)', tornado.web.StaticFileHandler, {"path": '/'}),
-            (r'/images(.*)', tornado.web.StaticFileHandler, {"path": "/images"}),
+            (web_subdir, PublicHandler),
+            (web_subdir + r'([a-zA-Z]+)', PublicHandler),
+            (web_subdir + r'admin/downloadbackup', DownloadHandler),
+            (web_subdir + r'admin/(.*)', AdminHandler, dict(mcserver=self.mc_server)),
+            (web_subdir + r'ajax/(.*)', AjaxHandler, dict(mcserver=self.mc_server)),
+            (web_subdir + r'setup/(.*)', SetupHandler, dict(mcserver=self.mc_server)),
+            (web_subdir + r'static(.*)', tornado.web.StaticFileHandler, {"path": '/'}),
+            (web_subdir + r'images(.*)', tornado.web.StaticFileHandler, {"path": "/images"}),
 
             # API routes
-            (r'/api/v1/host_stats', api_routes.GetHostStats, dict(mcserver=self.mc_server)),
-            (r'/api/v1/server_stats', api_routes.GetServerStats, dict(mcserver=self.mc_server)),
+            (web_subdir + r'api/v1/host_stats', api_routes.GetHostStats, dict(mcserver=self.mc_server)),
+            (web_subdir + r'api/v1/server_stats', api_routes.GetServerStats, dict(mcserver=self.mc_server)),
 
             # Server related
-            (r'/api/v1/server/send_command', api_routes.SendCommand, dict(mcserver=self.mc_server)),
-            (r'/api/v1/server/get_logs', api_routes.GetMCLogs, dict(mcserver=self.mc_server)),
-            (r'/api/v1/server/search_logs', api_routes.SearchMCLogs, dict(mcserver=self.mc_server)),
-            (r'/api/v1/server/force_backup', api_routes.ForceServerBackup, dict(mcserver=self.mc_server)),
-            (r'/api/v1/server/start', api_routes.StartServer, dict(mcserver=self.mc_server)),
-            (r'/api/v1/server/stop', api_routes.StopServer, dict(mcserver=self.mc_server)),
-            (r'/api/v1/server/restart', api_routes.RestartServer, dict(mcserver=self.mc_server)),
-            (r'/api/v1/list_servers', api_routes.ListServers, dict(mcserver=self.mc_server)),
+            (web_subdir + r'api/v1/server/send_command', api_routes.SendCommand, dict(mcserver=self.mc_server)),
+            (web_subdir + r'api/v1/server/get_logs', api_routes.GetMCLogs, dict(mcserver=self.mc_server)),
+            (web_subdir + r'api/v1/server/search_logs', api_routes.SearchMCLogs, dict(mcserver=self.mc_server)),
+            (web_subdir + r'api/v1/server/force_backup', api_routes.ForceServerBackup, dict(mcserver=self.mc_server)),
+            (web_subdir + r'api/v1/server/start', api_routes.StartServer, dict(mcserver=self.mc_server)),
+            (web_subdir + r'api/v1/server/stop', api_routes.StopServer, dict(mcserver=self.mc_server)),
+            (web_subdir + r'api/v1/server/restart', api_routes.RestartServer, dict(mcserver=self.mc_server)),
+            (web_subdir + r'api/v1/list_servers', api_routes.ListServers, dict(mcserver=self.mc_server)),
 
             # Crafty related
-            (r'/api/v1/crafty/add_user', api_routes.CreateUser),
-            (r'/api/v1/crafty/del_user', api_routes.DeleteUser),
-            (r'/api/v1/crafty/get_logs', api_routes.GetCraftyLogs),
-            (r'/api/v1/crafty/search_logs', api_routes.SearchCraftyLogs)   
+            (web_subdir + r'api/v1/crafty/add_user', api_routes.CreateUser),
+            (web_subdir + r'api/v1/crafty/del_user', api_routes.DeleteUser),
+            (web_subdir + r'api/v1/crafty/get_logs', api_routes.GetCraftyLogs),
+            (web_subdir + r'api/v1/crafty/search_logs', api_routes.SearchCraftyLogs)   
         ]
 
         cert_objects = {
@@ -158,7 +159,7 @@ class webserver():
             xsrf_cookies=True,
             autoreload=False,
             log_function=self.log_function,
-            login_url="/",
+            login_url=web_subdir,
             default_handler_class=My404Handler
         )
 
