@@ -248,7 +248,7 @@ if __name__ == '__main__':
         # save a file in app/config/new_install so we know this is a new install
         helper.make_new_install_file()
 
-        admin_pass = helper.random_string_generator()
+        admin_pass = 'AdminAdmin'
         admin_token = secrets.token_urlsafe(32)
 
         peewee.default_settings(admin_pass, admin_token)
